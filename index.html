@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Smart Study Planner</title>
+  <style>
+    * { box-sizing: border-box; font-family: Arial, sans-serif; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg,#e8f5e9,#f5f9ff);
+      display:flex;justify-content:center;align-items:center;padding:20px;
+    }
+    .container {
+      background:white; width:100%; max-width:600px; padding:28px; border-radius:14px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.08);
+    }
+    h1 { text-align:center; color:#245c35; margin:0 0 8px; }
+    .subtitle { text-align:center; color:#666; margin-bottom:20px; }
+    label{display:block;margin-top:14px;margin-bottom:6px;font-weight:700;color:#333;}
+    select,input{width:100%;padding:12px;border:1px solid #dcdcdc;border-radius:10px;font-size:15px;}
+    button{
+      width:100%;margin-top:18px;padding:12px;border:none;border-radius:10px;
+      background:#4caf50;color:#fff;font-size:16px;font-weight:700;cursor:pointer;
+    }
+    button:hover{background:#388e3c;}
+    #result{display:none;margin-top:18px;padding:14px;background:#f1f8e9;border-radius:10px;line-height:1.5;}
+    .plan{margin-top:10px;padding:10px;background:#fff;border-radius:8px;border:1px solid #eee;}
+    @media (max-width:420px){ .container{padding:18px} }
+  </style>
+</head>
+<body>
+  <div class="container" role="main" aria-labelledby="title">
+    <h1 id="title">📚 Smart Study Planner</h1>
+    <p class="subtitle">Build a study plan based on your time and energy.</p>
+
+    <label for="subject">Choose a subject</label>
+    <select id="subject" aria-label="Subject">
+      <option>Mathematics</option>
+      <option>Physics</option>
+      <option>Biology</option>
+      <option>Languages</option>
+      <option>Computer Science</option>
+    </select>
+
+    <label for="energy">How do you feel?</label>
+    <select id="energy" aria-label="Energy level">
+      <option value="tired">😴 Tired</option>
+      <option value="normal">🙂 Normal</option>
+      <option value="motivated">🔥 Motivated</option>
+    </select>
+
+    <label for="time">How many minutes do you have?</label>
+    <input id="time" type="number" min="10" placeholder="Example: 60" aria-label="Available minutes">
+
+    <button id="createBtn">Create My Plan</button>
+
+    <div id="result" aria-live="polite"></div>
+  </div>
+
+<script>
+document.getElementById('createBtn').addEventListener('click', createPlan);
+
+function createPlan() {
+  const subject = document.getElementById('subject').value;
+  const energy = document.getElementById('energy').value;
+  const time = Number(document.getElementById('time').value);
+  const result = document.getElementById('result');
+
+  if (!time || time < 10) {
+    result.style.display = 'block';
+    result.innerHTML = '⏱️ Please enter at least 10 minutes.';
+    return;
+  }
+
+  let plan = '';
+  if (energy === 'tired') {
+    plan = `<div class="plan"><strong>Short and easy session</strong><br><br>
+            10 min → Review the basics<br>
+            15 min → Solve easy exercises<br>
+            5 min → Take a break<br>
+            10 min → Summarize what you learned</div>`;
+  } else if (energy === 'normal') {
+    plan = `<div class="plan"><strong>Balanced session</strong><br><br>
+            20 min → Learn/review the lesson<br>
+            25 min → Practice exercises<br>
+            5 min → Break<br>
+            15 min → Check your mistakes</div>`;
+  } else {
+    plan = `<div class="plan"><strong>Challenge session 🔥</strong><br><br>
+            25 min → Study the concept<br>
+            30 min → Solve challenging exercises<br>
+            5 min → Break<br>
+            20 min → Test yourself without notes</div>`;
+  }
+
+  result.style.display = 'block';
+  result.innerHTML = `<strong>Your personalized plan:</strong><br>
+                      Subject: ${escapeHtml(subject)}<br>
+                      Available time: ${escapeHtml(String(time))} minutes
+                      ${plan}`;
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[c]; });
+}
+</script>
+</body>
+</html>
